@@ -259,6 +259,7 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
     renderExperience();
     renderProjects();
     renderContact();
+    renderForm();
     renderTheme();
   }
 
@@ -507,6 +508,167 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
     });
   }
 
+  /* ---------- Formulaire ---------- */
+
+  const form = $("#contact-form");
+  const formStatus = $("#form-status");
+  const requiredFields = $$("[required]", form);
+
+  function setFormStatus(kind, ...content) {
+    formStatus.className = `form-status ${kind}`;
+    formStatus.replaceChildren(...content);
+  }
+
+  function checkField(input) {
+    const errors = D.ui.form.errors;
+    const message = !input.value.trim() ? errors.required : input.validity.typeMismatch ? errors.email : null;
+    const error = document.getElementById(input.getAttribute("aria-describedby"));
+    error.hidden = !message;
+    error.textContent = t(message);
+    if (message) input.setAttribute("aria-invalid", "true");
+    else input.removeAttribute("aria-invalid");
+    return !message;
+  }
+
+  function renderForm() {
+    requiredFields.filter((input) => input.hasAttribute("aria-invalid")).forEach(checkField);
+    setFormStatus("");
+  }
+
+  function mailtoUrl(data) {
+    const subject = data.get("subject") || t(D.ui.form.defaultSubject);
+    const body = `${data.get("message")}\n\n${data.get("name")}\n${data.get("email")}`;
+    return `mailto:${D.site.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  }
+
+  async function sendForm(event) {
+    event.preventDefault();
+    const submit = $('[type="submit"]', form);
+    if (submit.getAttribute("aria-disabled") === "true") return;
+
+    const invalid = requiredFields.filter((input) => !checkField(input));
+    if (invalid.length > 0) {
+      invalid[0].focus();
+      return;
+    }
+
+    const data = new FormData(form);
+    const mailLink = el("a", { href: mailtoUrl(data) }, D.site.email);
+    if (data.get("_gotcha")) {
+      form.reset();
+      return;
+    }
+    if (!FORM_ENDPOINT) {
+      setFormStatus("", `${t(D.ui.form.mailto)} `, mailLink);
+      location.href = mailLink.href;
+      return;
+    }
+
+    if (!data.get("subject")) data.set("subject", t(D.ui.form.defaultSubject));
+    submit.setAttribute("aria-disabled", "true");
+    submit.textContent = t(D.ui.form.sending);
+    try {
+      const response = await fetch(FORM_ENDPOINT, { method: "POST", body: data, headers: { Accept: "application/json" } });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      form.reset();
+      setFormStatus("ok", t(D.ui.form.ok));
+    } catch {
+      setFormStatus("fail", `${t(D.ui.form.fail)} `, mailLink);
+    } finally {
+      submit.removeAttribute("aria-disabled");
+      submit.textContent = t(D.ui.form.send);
+    }
+  }
+
+  function initForm() {
+    form.noValidate = true;
+    form.addEventListener("submit", sendForm);
+    for (const input of requiredFields) {
+      input.addEventListener("input", () => input.hasAttribute("aria-invalid") && checkField(input));
+    }
+    $("#cv-btn").addEventListener("click", () => {
+      const subject = $("#f-subject");
+      if (!D.site.cv.ready && !subject.value) subject.value = t(D.ui.buttons.cvSubject);
+    });
+  }
+
+  /* ---------- Mini terminal ---------- */
+
+  function initShell() {
+    const log = $("#shell-log");
+    const input = $("#shell-input");
+    const texts = D.ui.terminal;
+    const past = [];
+    let cursor = 0;
+
+    const print = (text, className) => {
+      log.hidden = false;
+      log.append(el("p", { class: className }, text));
+      while (log.children.length > 60) log.firstChild.remove();
+      log.scrollTop = log.scrollHeight;
+    };
+
+    const visit = (id) => {
+      print(fill(t(texts.going), { c: t(D.ui.nav[id]) }));
+      const section = document.getElementById(id);
+      const title = $("h2", section) || $("h1", section);
+      section.scrollIntoView();
+      title.tabIndex = -1;
+      title.focus({ preventScroll: true });
+    };
+
+    const commands = {
+      help: () => t(texts.help).forEach((line) => print(line)),
+      projets: () => D.projects.forEach((project) => print(`${fileName(project).padEnd(18)}${t(project.title)}`)),
+      open: (name) => {
+        const project = D.projects.find((item) => name && (item.id === name || fileName(item) === name));
+        if (project) goToStudy(project.id);
+        else print(fill(t(texts.noProject), { c: D.projects.map((item) => item.id).join(", ") }));
+      },
+      profil: () => visit("profil"),
+      skills: () => visit("skills"),
+      exp: () => visit("exp"),
+      contact: () => visit("contact"),
+      cv: () => {
+        print(t(D.site.cv.ready ? texts.cvOk : texts.cvSoon));
+        if (D.site.cv.ready) $("#cv-btn").click();
+      },
+      lang: (code) => (code === "fr" || code === "en" ? setLang(code) : print("lang fr | lang en")),
+      theme: () => toggleTheme(),
+      whoami: () => print(D.site.name),
+      clear: () => {
+        log.replaceChildren();
+        log.hidden = true;
+      },
+    };
+    const aliases = { aide: "help", projects: "projets", ls: "projets", profile: "profil", about: "profil" };
+
+    const run = (line) => {
+      const [word, argument] = line.toLowerCase().split(/\s+/);
+      const name = aliases[word] || word;
+      print(line, "in");
+      if (Object.hasOwn(commands, name)) commands[name](argument);
+      else print(fill(t(texts.notFound), { c: word }));
+    };
+
+    $("#shell-form").addEventListener("submit", (event) => {
+      event.preventDefault();
+      const line = input.value.trim();
+      input.value = "";
+      if (!line) return;
+      past.push(line);
+      cursor = past.length;
+      run(line);
+    });
+
+    input.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowUp" && event.key !== "ArrowDown") return;
+      event.preventDefault();
+      cursor = Math.min(past.length, Math.max(0, cursor + (event.key === "ArrowUp" ? -1 : 1)));
+      input.value = past[cursor] || "";
+    });
+  }
+
   /* ---------- Langue et thème ---------- */
 
   function setLang(next) {
@@ -611,6 +773,8 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
   initTheme();
   initMenu();
   initStudy();
+  initForm();
+  initShell();
   for (const button of $$("[data-lang]")) button.addEventListener("click", () => setLang(button.dataset.lang));
   if ("IntersectionObserver" in window) {
     initActiveLink();

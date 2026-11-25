@@ -502,9 +502,9 @@ h2:focus {
   color: var(--green);
 }
 
-.btn[disabled] {
+.btn[aria-disabled="true"] {
   cursor: progress;
-  opacity: 0.7;
+  opacity: 0.75;
 }
 
 @media (max-width: 30rem) {
@@ -632,6 +632,10 @@ h2:focus {
   border-top: 1px dashed var(--edge);
 }
 
+html:not(.js) .shell {
+  display: none;
+}
+
 .shell-log {
   max-height: 13rem;
   margin-bottom: 0.75rem;
@@ -703,6 +707,7 @@ h2:focus {
 .stats {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-height: 11rem;
   margin-top: clamp(2.5rem, 5vw, 4rem);
 }
 
@@ -731,7 +736,12 @@ h2:focus {
 @media (min-width: 48rem) {
   .stats {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+    min-height: 5.5rem;
   }
+}
+
+html:not(.js) .stats {
+  display: none;
 }
 
 /* ---------- Sections ---------- */
