@@ -324,7 +324,7 @@ window.PORTFOLIO = {
               { name: "MyoWare 2.0", via: "EMG" },
               { name: "ESP32-S3", via: { fr: "analogique", en: "analog" } },
               { name: { fr: "Application Flutter", en: "Flutter app" }, via: "Bluetooth LE", mine: true },
-              { name: "API PHP", via: "HTTPS", mine: true },
+              { name: { fr: "API PHP", en: "PHP API" }, via: "HTTPS", mine: true },
               { name: "MySQL", via: "SQL", mine: true },
             ],
           },
@@ -729,12 +729,14 @@ window.PORTFOLIO = {
       open: { fr: "Voir l'étude de cas", en: "View case study" },
     },
     study: {
+      title: { fr: "Étude de cas", en: "Case study" },
       context: { fr: "Contexte", en: "Context" },
       problem: { fr: "Problème", en: "Problem" },
       contribution: { fr: "Ma contribution", en: "My contribution" },
       stack: { fr: "Stack", en: "Stack" },
-      mine: { fr: "ma partie", en: "my part" },
-      team: { fr: "équipe", en: "team" },
+      mine: { fr: "utilisé dans ma partie", en: "used in my part" },
+      team: { fr: "reste de l'équipe", en: "rest of the team" },
+      flowMine: { fr: "en vert, les liaisons que j'ai spécifiées", en: "in green, the links I specified" },
       result: { fr: "Résultat", en: "Result" },
       credits: { fr: "Équipe", en: "Team" },
       shots: { fr: "Captures", en: "Pictures" },
@@ -777,6 +779,7 @@ window.PORTFOLIO = {
       label: { fr: "Mini terminal : tapez une commande, par exemple help", en: "Mini terminal: type a command, for example help" },
       log: { fr: "Réponses du terminal", en: "Terminal output" },
       hint: { fr: "tapez help", en: "type help" },
+      run: { fr: "exécuter", en: "run" },
       help: {
         fr: [
           "projets          liste des projets",
