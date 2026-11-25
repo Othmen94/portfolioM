@@ -40,9 +40,13 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
     return /^fr/i.test(store.get("lang") || navigator.language || "fr") ? "fr" : "en";
   }
 
+  const NBSP = String.fromCharCode(0xa0);
+  const JOINER = String.fromCharCode(0x2060);
+
+  // Apostrophes typographiques, dates « 2024–2025 » insécables, espaces insécables du français.
   function typography(text) {
-    const s = text.replace(/'/g, "’").replace(/(\d)–(\d)/g, "$1⁠–⁠$2");
-    return lang === "fr" ? s.replace(/ ([:;?!»])/g, " $1").replace(/« /g, "« ") : s;
+    const s = text.replace(/'/g, "’").replace(/(\d)–(\d)/g, `$1${JOINER}–${JOINER}$2`);
+    return lang === "fr" ? s.replace(/ ([:;?!»])/g, `${NBSP}$1`).replace(/« /g, `«${NBSP}`) : s;
   }
 
   // Texte dans la langue courante ; les TODO deviennent une chaîne vide, sauf avec ?todo.
@@ -85,14 +89,16 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
     out: ["M8 5h7v7M15 5L6 14"],
     code: ["M7 6l-4 4 4 4M13 6l4 4-4 4"],
     close: ["M5 5l10 10M15 5L5 15"],
+    prev: ["M16 10H4M9 5l-5 5 5 5"],
+    next: ["M4 10h12M11 5l5 5-5 5"],
   };
   const icon = (name, size = 16) => svg("0 0 20 20", ICONS[name], { width: size, height: size });
   const hiddenText = (text) => el("span", { class: "sr-only" }, text);
 
-  function outLink(link, className = "link") {
+  function outLink(link) {
     return el(
       "a",
-      { class: className, href: link.url, target: "_blank", rel: "noopener noreferrer" },
+      { class: "link", href: link.url, target: "_blank", rel: "noopener noreferrer" },
       icon(link.kind === "code" ? "code" : "out"),
       t(link.label),
       hiddenText(` (${t(D.ui.newTab)})`)
@@ -224,39 +230,6 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
     );
   }
 
-  const DEFAULT_ART = ["M118 42l22 18-22 18M152 80h44"];
-
-  function projectCard(project) {
-    const category = D.categories.find((item) => item.id === project.category);
-    const title = t(project.title);
-    return el(
-      "li",
-      { class: project.featured ? "featured" : null, "data-category": project.category },
-      el(
-        "article",
-        { class: "card project" },
-        el("p", { class: "project-bar" }, el("span", { class: "file" }, fileName(project)), el("span", null, t(category.label))),
-        el("div", { class: "art", "aria-hidden": "true" }, svg("0 0 320 120", project.art || DEFAULT_ART)),
-        el(
-          "div",
-          { class: "project-body" },
-          project.badge && el("p", { class: `medal ${project.badge.kind}` }, t(project.badge.text)),
-          el("h3", null, title),
-          el("p", { class: "meta" }, t(project.context)),
-          el("p", { class: "summary" }, t(project.summary)),
-          t(project.note) && el("p", { class: "note" }, t(project.note)),
-          el("p", { class: "mine" }, el("b", null, `${t(D.ui.project.role)} `), t(project.role)),
-          el("ul", { class: "tags", "aria-label": t(D.ui.project.tech) }, t(project.tech).map((name) => el("li", null, name))),
-          el("div", { class: "project-actions" }, project.links.map((link) => outLink(link)))
-        )
-      )
-    );
-  }
-
-  function renderProjects() {
-    $("#projects-body").replaceChildren(...D.projects.map(projectCard));
-  }
-
   function renderContact() {
     const { site, ui } = D;
     const row = (label, value, href, external) =>
@@ -289,6 +262,251 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
     renderTheme();
   }
 
+  /* ---------- Projets et filtres ---------- */
+
+  const DEFAULT_ART = ["M118 42l22 18-22 18M152 80h44"];
+  let filter = "all";
+
+  function projectCard(project) {
+    const category = D.categories.find((item) => item.id === project.category);
+    const title = t(project.title);
+    return el(
+      "li",
+      { class: project.featured ? "featured" : null, "data-category": project.category },
+      el(
+        "article",
+        { class: "card project" },
+        el("p", { class: "project-bar" }, el("span", { class: "file" }, fileName(project)), el("span", null, t(category.label))),
+        el("div", { class: "art", "aria-hidden": "true" }, svg("0 0 320 120", project.art || DEFAULT_ART)),
+        el(
+          "div",
+          { class: "project-body" },
+          project.badge && el("p", { class: `medal ${project.badge.kind}` }, t(project.badge.text)),
+          el("h3", null, title),
+          el("p", { class: "meta" }, t(project.context)),
+          el("p", { class: "summary" }, t(project.summary)),
+          t(project.note) && el("p", { class: "note" }, t(project.note)),
+          el("p", { class: "mine" }, el("b", null, `${t(D.ui.project.role)} `), t(project.role)),
+          el("ul", { class: "tags", "aria-label": t(D.ui.project.tech) }, t(project.tech).map((name) => el("li", null, name))),
+          el(
+            "div",
+            { class: "project-actions" },
+            el(
+              "button",
+              { class: "btn", type: "button", "aria-haspopup": "dialog", onclick: () => goToStudy(project.id) },
+              t(D.ui.project.open),
+              hiddenText(` : ${title}`)
+            ),
+            project.links.map(outLink)
+          )
+        )
+      )
+    );
+  }
+
+  function renderProjects() {
+    const options = [{ id: "all", label: D.ui.filters.all }, ...D.categories];
+    $("#filters").replaceChildren(
+      ...options.map(({ id, label }) =>
+        el(
+          "button",
+          { type: "button", "data-filter": id, onclick: () => setFilter(id) },
+          `${t(label)} (${D.projects.filter((project) => id === "all" || project.category === id).length})`
+        )
+      )
+    );
+    $("#projects-body").replaceChildren(...D.projects.map(projectCard));
+    applyFilter();
+  }
+
+  function applyFilter() {
+    for (const button of $$("[data-filter]")) button.setAttribute("aria-pressed", String(button.dataset.filter === filter));
+    const cards = $$("#projects-body > li");
+    for (const card of cards) card.hidden = filter !== "all" && card.dataset.category !== filter;
+    return cards.filter((card) => !card.hidden).length;
+  }
+
+  function setFilter(id) {
+    filter = id;
+    const n = applyFilter();
+    say(n === 1 ? t(D.ui.filters.one) : fill(t(D.ui.filters.many), { n }));
+  }
+
+  /* ---------- Étude de cas ---------- */
+
+  const dialog = $("#study");
+  let opener = null;
+
+  const bullets = (items) => el("ul", { class: "bullets" }, items.map((item) => el("li", null, item)));
+
+  function stackList(stack) {
+    const items = stack.map((item) => (item.name ? item : { name: item })).filter((item) => t(item.name));
+    return [
+      el(
+        "ul",
+        { class: "tags" },
+        items.map((item) =>
+          el("li", { class: item.mine ? "is-mine" : null }, t(item.name), item.mine && hiddenText(` (${t(D.ui.study.mine)})`))
+        )
+      ),
+      items.some((item) => item.mine) &&
+        el("p", { class: "legend", "aria-hidden": "true" }, el("span", { class: "is-mine" }, t(D.ui.study.mine)), el("span", null, t(D.ui.study.team))),
+    ];
+  }
+
+  function flowFigure(figure) {
+    return el(
+      "figure",
+      { class: "card figure" },
+      el("figcaption", null, t(figure.title), figure.items.some((item) => item.mine) && ` (${t(D.ui.study.flowMine)})`),
+      el(
+        "ol",
+        { class: "flow" },
+        figure.items.map((item) =>
+          el(
+            "li",
+            null,
+            item.via && el("span", { class: `via${item.mine ? " is-mine" : ""}` }, t(item.via), icon("next", 14)),
+            el("span", { class: "node" }, t(item.name))
+          )
+        )
+      )
+    );
+  }
+
+  function bytesFigure(figure) {
+    return el(
+      "figure",
+      { class: "card figure" },
+      el("figcaption", null, t(figure.title)),
+      el(
+        "ol",
+        { class: "bytes" },
+        figure.items.map((item) =>
+          el(
+            "li",
+            null,
+            el("span", { class: "hex" }, item.hex),
+            el("span", { class: "name" }, t(item.name)),
+            el("span", { class: "value" }, t(item.value))
+          )
+        )
+      )
+    );
+  }
+
+  const FIGURES = { flow: flowFigure, bytes: bytesFigure };
+
+  function shotList(shots) {
+    return el(
+      "div",
+      { class: `shots${shots.length === 1 ? " single" : ""}` },
+      shots.map((shot) =>
+        el(
+          "figure",
+          null,
+          el("img", { src: shot.src, width: shot.w, height: shot.h, alt: t(shot.alt), loading: "lazy", decoding: "async" }),
+          el("figcaption", null, t(shot.caption))
+        )
+      )
+    );
+  }
+
+  function renderStudy(project) {
+    const { study } = project;
+    const labels = D.ui.study;
+    const index = D.projects.indexOf(project);
+
+    const block = (label, content) => content && [el("h3", null, t(label)), content];
+    const text = (value) => t(value) && el("p", { class: "study-text" }, t(value));
+    const list = (value) => t(value || []).length > 0 && bullets(t(value));
+    const step = (offset, label) => {
+      const target = D.projects[index + offset];
+      if (!target) return el("span");
+      return el(
+        "button",
+        { class: "btn", type: "button", onclick: () => goToStudy(target.id) },
+        offset < 0 && icon("prev"),
+        hiddenText(`${t(label)} : `),
+        fileName(target),
+        offset > 0 && icon("next")
+      );
+    };
+
+    dialog.replaceChildren(
+      el(
+        "div",
+        { class: "study-bar" },
+        el("p", { "aria-hidden": "true" }, el("span", { class: "ps1" }, "$ "), `cat ${fileName(project)}`),
+        el("button", { class: "icon-btn", type: "button", "aria-label": t(labels.close), onclick: () => dialog.close() }, icon("close", 18))
+      ),
+      el(
+        "div",
+        { class: "study-scroll" },
+        el("p", { class: "meta" }, t(project.context)),
+        el("h2", { id: "study-title", tabindex: "-1" }, t(project.title)),
+        project.badge && el("p", { class: `medal ${project.badge.kind}` }, t(project.badge.text)),
+        el("p", { class: "mine" }, el("b", null, `${t(D.ui.project.role)} `), t(project.role)),
+        t(project.note) && el("p", { class: "note" }, t(project.note)),
+        block(labels.context, text(study.context)),
+        block(labels.problem, text(study.problem)),
+        block(labels.contribution, list(study.contribution)),
+        (study.figures || []).map((figure) => FIGURES[figure.kind](figure)),
+        block(labels.stack, stackList(study.stack)),
+        block(labels.result, list(study.result)),
+        block(labels.credits, text(study.team)),
+        block(labels.shots, (study.shots || []).length > 0 && shotList(study.shots)),
+        block(labels.links, project.links.length > 0 && el("div", { class: "study-links" }, project.links.map(outLink))),
+        el("div", { class: "study-nav" }, step(-1, labels.prev), step(1, labels.next))
+      )
+    );
+  }
+
+  function openStudy(project) {
+    renderStudy(project);
+    if (!dialog.open) {
+      opener = document.activeElement;
+      dialog.showModal();
+    }
+    $("#study-title").focus();
+  }
+
+  function goToStudy(id) {
+    if (location.hash === `#etude-${id}`) route();
+    else location.hash = `etude-${id}`;
+  }
+
+  // Ouvre la fiche désignée par l'adresse (#etude-athletix) et la referme sinon.
+  function route() {
+    const match = /^#etude-([\w-]+)$/.exec(location.hash);
+    const project = match && projectById(match[1]);
+    if (project) openStudy(project);
+    else if (dialog.open) dialog.close();
+    return Boolean(project);
+  }
+
+  function initStudy() {
+    addEventListener("hashchange", route);
+    dialog.addEventListener("close", () => {
+      if (location.hash.startsWith("#etude-")) history.replaceState(null, "", location.pathname + location.search);
+      if (opener?.isConnected) opener.focus({ preventScroll: true });
+    });
+    dialog.addEventListener("click", (event) => event.target === dialog && dialog.close());
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key !== "Tab") return;
+      const items = $$("a[href], button", dialog);
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    });
+  }
+
   /* ---------- Langue et thème ---------- */
 
   function setLang(next) {
@@ -318,6 +536,8 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
     renderTheme();
   }
 
+  const toggleTheme = () => setTheme(root.dataset.theme === "light" ? "dark" : "light", true);
+
   function initTheme() {
     const system = matchMedia("(prefers-color-scheme: light)");
     const saved = store.get("theme");
@@ -328,8 +548,6 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
     });
     $("#theme-btn").addEventListener("click", toggleTheme);
   }
-
-  const toggleTheme = () => setTheme(root.dataset.theme === "light" ? "dark" : "light", true);
 
   /* ---------- Navigation ---------- */
 
@@ -372,7 +590,6 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
   }
 
   function initReveal() {
-    const items = $$(".reveal");
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -383,7 +600,7 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
       },
       { rootMargin: "0px 0px -6% 0px" }
     );
-    items.forEach((item) => observer.observe(item));
+    $$(".reveal").forEach((item) => observer.observe(item));
     root.classList.add("reveal-on");
   }
 
@@ -393,10 +610,11 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
   render();
   initTheme();
   initMenu();
+  initStudy();
   for (const button of $$("[data-lang]")) button.addEventListener("click", () => setLang(button.dataset.lang));
   if ("IntersectionObserver" in window) {
     initActiveLink();
     initReveal();
   }
-  if (location.hash.length > 1) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+  if (!route() && location.hash.length > 1) document.getElementById(location.hash.slice(1))?.scrollIntoView();
 })();

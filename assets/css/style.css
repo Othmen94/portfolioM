@@ -1343,13 +1343,27 @@ h2:focus {
 }
 
 .legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.1rem 1.25rem;
   margin-top: 0.6rem;
   color: var(--muted);
   font: 500 0.75rem / 1.6 var(--mono);
 }
 
-.legend b {
-  color: var(--green);
+.legend span::before {
+  content: "";
+  display: inline-block;
+  width: 0.7em;
+  height: 0.7em;
+  margin-right: 0.5em;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+}
+
+.legend .is-mine::before {
+  border-color: var(--green);
+  background: var(--green);
 }
 
 .figure {
@@ -1384,11 +1398,10 @@ h2:focus {
 }
 
 .flow .via {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   color: var(--muted);
-}
-
-.flow .via::after {
-  content: " ->";
 }
 
 .flow .via.is-mine {
