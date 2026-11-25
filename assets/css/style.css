@@ -457,6 +457,10 @@ h2:focus {
   font-weight: 700;
 }
 
+.badge strong::after {
+  content: " ·";
+}
+
 .dot {
   width: 0.55rem;
   height: 0.55rem;
@@ -703,6 +707,12 @@ html:not(.js) .shell {
 .shell-run:hover {
   border-color: var(--green);
   color: var(--green);
+}
+
+@media (max-width: 30rem) {
+  .shell-form .host {
+    display: none;
+  }
 }
 
 /* Statistiques */
@@ -1359,115 +1369,6 @@ html:not(.js) .stats {
 
 .study .tags {
   margin-top: 0;
-}
-
-.tags .is-mine {
-  border-color: var(--green);
-  color: var(--green);
-}
-
-.legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.1rem 1.25rem;
-  margin-top: 0.6rem;
-  color: var(--muted);
-  font: 500 0.75rem / 1.6 var(--mono);
-}
-
-.legend span::before {
-  content: "";
-  display: inline-block;
-  width: 0.7em;
-  height: 0.7em;
-  margin-right: 0.5em;
-  border: 1px solid var(--line);
-  border-radius: 2px;
-}
-
-.legend .is-mine::before {
-  border-color: var(--green);
-  background: var(--green);
-}
-
-.figure {
-  margin-top: 1rem;
-  padding: 1.1rem;
-  overflow: hidden;
-}
-
-.figure figcaption {
-  margin-bottom: 0.8rem;
-  color: var(--muted);
-  font: 500 var(--small) / 1.5 var(--mono);
-}
-
-.flow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem 0.4rem;
-  font: 500 0.75rem / 1.4 var(--mono);
-}
-
-.flow li {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.flow .node {
-  padding: 0.35rem 0.6rem;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-}
-
-.flow .via {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  color: var(--muted);
-}
-
-.flow .via.is-mine {
-  color: var(--green);
-  font-weight: 700;
-}
-
-.bytes {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.5rem;
-  font: 500 0.75rem / 1.5 var(--mono);
-}
-
-.bytes li {
-  padding: 0.6rem 0.7rem;
-  border: 1px solid var(--edge);
-  border-top: 3px solid var(--green);
-  border-radius: 4px;
-  background: var(--bg);
-}
-
-.bytes .hex {
-  display: block;
-  font-size: 0.9375rem;
-  font-weight: 700;
-}
-
-.bytes .name {
-  display: block;
-  color: var(--muted);
-}
-
-.bytes .value {
-  display: block;
-  color: var(--green);
-}
-
-@media (min-width: 40rem) {
-  .bytes {
-    grid-template-columns: 4fr 2.6fr 2.2fr 2.4fr;
-  }
 }
 
 .shots {

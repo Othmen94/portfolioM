@@ -14,13 +14,11 @@ window.PORTFOLIO = {
   site: {
     url: "https://www.xyzdesign.xyz/",
     name: "Othmen Al Bydeoi",
-    // TODO: confirmer l'adresse e-mail à afficher (reprise du CV et de l'ancien site).
     email: "othmane.bedwi@gmail.com",
-    // TODO: confirmer le lien LinkedIn (LinkedIn bloque les vérifications automatiques).
+    // TODO: confirmer le lien LinkedIn.
     linkedin: "https://www.linkedin.com/in/othmen-al-bydeoi-96942832a",
     github: "https://github.com/Othmen94",
-    // TODO: déposer le CV anglais SANS téléphone, adresse ni âge, puis passer ready à true.
-    cv: { file: "assets/cv/CV_Othmen_AL_BYDEOI_EN.pdf", ready: false },
+    cv: { file: "assets/cv/CV_Othmen_AL_BYDEOI_EN.pdf", ready: true },
     workingSince: 2020,
     availableFrom: { fr: "mai 2027", en: "May 2027" },
   },
@@ -34,14 +32,14 @@ window.PORTFOLIO = {
       en: "Engineering student in health technologies",
     },
     pitch: {
-      fr: "J'aime faire le pont entre le matériel et le logiciel, avec la santé comme terrain d'application. Je recherche un stage international de 4 mois, de mai à août 2027, dans le cadre d'Erasmus+.",
-      en: "I like bridging hardware and software, with healthcare as the field of application. I am looking for a 4-month international internship, from May to August 2027, through Erasmus+.",
+      fr: "J'aime faire le pont entre le matériel et le logiciel, avec la santé comme terrain d'application. Je recherche un stage international de 4 mois, de mai à août 2027.",
+      en: "I like bridging hardware and software, with healthcare as the field of application. I am looking for a 4-month international internship, from May to August 2027.",
     },
     badge: {
       status: { fr: "DISPONIBLE", en: "AVAILABLE" },
       text: {
-        fr: "stage 4 mois · mai–août 2027 · Erasmus+",
-        en: "4-month internship · May–Aug 2027 · Erasmus+",
+        fr: "stage 4 mois · mai–août 2027",
+        en: "4-month internship · May–Aug 2027",
       },
     },
     photoAlt: { fr: "Portrait d'Othmen Al Bydeoi", en: "Portrait of Othmen Al Bydeoi" },
@@ -61,7 +59,6 @@ window.PORTFOLIO = {
     years: { fr: "ans d'expérience (atelier vélo)", en: "years of experience (bike workshop)" },
     associations: { fr: "associations", en: "non-profits" },
     available: { fr: "disponible", en: "available" },
-    // TODO: le CV indique « 3 pays vécus ». Donner la liste des pays pour rétablir ce chiffre.
   },
 
   /* ------------------------------------------------------------------ */
@@ -92,14 +89,13 @@ window.PORTFOLIO = {
       },
     ],
     languagesTitle: { fr: "Langues", en: "Languages" },
-    // TODO: langues parlées et niveaux (indispensable pour Erasmus+).
-    languages: "TODO: langues parlées et niveaux, par exemple « Français (langue maternelle), anglais (B2) »",
+    languages: "TODO: langues parlées et niveaux",
   },
 
   /* ------------------------------------------------------------------ */
   // from : "cv" ou l'id d'un projet. Les sources s'affichent à droite de chaque compétence.
   // level : "beginner", "intermediate" ou "advanced" ; un niveau TODO reste masqué.
-  // pending: true : compétence de l'ancien site absente du CV, masquée tant qu'elle n'est pas confirmée.
+  // pending: true : compétence masquée.
   skills: [
     {
       title: { fr: "Langages & scripts", en: "Languages & scripts" },
@@ -181,7 +177,7 @@ window.PORTFOLIO = {
           status: "done",
           title: { fr: "Stage découverte", en: "Discovery internship" },
           org: { fr: "Cabinet médical et dentaire, Bagneux", en: "Medical and dental practice, Bagneux, France" },
-          text: "TODO: missions du stage et ce que tu y as observé (2 lignes)",
+          text: "TODO: missions du stage",
           tags: [{ fr: "Santé", en: "Healthcare" }],
         },
         {
@@ -198,10 +194,13 @@ window.PORTFOLIO = {
         {
           date: { fr: "oct. 2026 – aujourd'hui", en: "Oct. 2026 – present" },
           status: "current",
-          title: { fr: "Partenariat SAV", en: "After-sales service partnership" },
+          title: { fr: "Partenariat SAV, réparation de vélos", en: "After-sales partnership, bicycle repair" },
           org: "ENGWE",
-          text: "TODO: tâches réalisées pour le SAV ENGWE (1 ou 2 lignes) et lien avec Le Cyclousain",
-          tags: [{ fr: "SAV", en: "After-sales" }],
+          text: {
+            fr: "Réparation de vélos pour le service après-vente de la marque.",
+            en: "Bicycle repairs for the brand's after-sales service.",
+          },
+          tags: [{ fr: "SAV", en: "After-sales" }, { fr: "Réparation de vélos", en: "Bicycle repair" }],
         },
       ],
     },
@@ -213,7 +212,6 @@ window.PORTFOLIO = {
           date: { fr: "2024 – aujourd'hui", en: "2024 – present" },
           status: "current",
           title: { fr: "Missions ponctuelles", en: "One-off assignments" },
-          // TODO: confirmer l'orthographe « OrNoirBourbon » (« Or Noir Bourbon » sur l'ancien site).
           org: "OPPIZI · HIVE Technologie GmbH · DELIVERBAG · OrNoirBourbon",
         },
         {
@@ -269,16 +267,16 @@ window.PORTFOLIO = {
       },
       badge: { kind: "info", text: { fr: "Prototype, brassard simulé", en: "Prototype, simulated armband" } },
       role: {
-        fr: "Architecture système : Bluetooth LE (GATT), modèles de données, intégration réseau, brassard simulé, tests",
-        en: "System architecture: Bluetooth LE (GATT), data models, network integration, simulated armband, tests",
+        fr: "Architecture système, brassard simulé et tests",
+        en: "System architecture, simulated armband and tests",
       },
       summary: {
         fr: "Brassard connecté qui mesure l'activité d'un muscle (EMG) et application de suivi sportif, pensés notamment pour des personnes atteintes de sclérose en plaques.",
         en: "A connected armband that measures muscle activity (EMG) and a fitness-tracking app, designed in particular for people living with multiple sclerosis.",
       },
       note: {
-        fr: "Ce n'est pas un dispositif médical. À la date du 14 novembre 2026, le matériel n'était pas encore arrivé : le système tourne sur un brassard simulé qui envoie les mêmes paquets Bluetooth, et rien n'a été testé sur des patients.",
-        en: "This is not a medical device. As of 14 November 2026, the hardware had not arrived: the system runs on a simulated armband that sends the same Bluetooth packets, and nothing has been tested on patients.",
+        fr: "Ce n'est pas un dispositif médical. Le matériel n'est pas encore arrivé (novembre 2026) : le système tourne sur un brassard simulé, sans essai sur des patients.",
+        en: "This is not a medical device. The hardware has not arrived yet (November 2026): the system runs on a simulated armband, with no tests on patients.",
       },
       tech: ["Flutter / Dart", "Bluetooth LE", "PHP", "MySQL", "ESP32 (C++)"],
       links: [
@@ -290,85 +288,35 @@ window.PORTFOLIO = {
       ],
       study: {
         context: {
-          fr: "Projet de groupe de l'EPISEN. Le brassard associe un capteur musculaire MyoWare 2.0 et un microcontrôleur ESP32-S3, reliés en Bluetooth Low Energy à une application Flutter (Android et web), qui enregistre les séances dans une API PHP et une base MySQL/MariaDB. L'application de l'équipe gère les comptes, les séances en direct avec alertes d'intensité, le suivi de la fatigue, les graphiques de progression, les exports PDF et CSV et les outils RGPD.",
-          en: "An EPISEN team project. The armband combines a MyoWare 2.0 muscle sensor and an ESP32-S3 microcontroller, connected over Bluetooth Low Energy to a Flutter app (Android and web) that stores sessions through a PHP API and a MySQL/MariaDB database. The team's app covers accounts, live sessions with intensity alerts, fatigue tracking, progress charts, PDF and CSV exports and GDPR tools.",
+          fr: "Un brassard mesure l'effort d'un muscle et l'envoie en Bluetooth à une application de suivi sportif.",
+          en: "An armband measures muscle effort and sends it over Bluetooth to a fitness-tracking app.",
         },
         problem: {
-          fr: "Comment développer et tester l'application avant de recevoir le matériel, sans devoir tout réécrire à son arrivée ? Il fallait un format d'échange précis, respecté à la fois par le brassard et par l'application.",
-          en: "How do you build and test the app before the hardware arrives, without rewriting everything when it does? It required a precise exchange format, followed by both the armband and the app.",
+          fr: "Développer et tester l'application avant d'avoir reçu le matériel.",
+          en: "Building and testing the app before the hardware arrived.",
         },
         contribution: {
           fr: [
-            "Spécification Bluetooth LE (GATT) : un service dédié, quatre caractéristiques et des paquets de 8 octets envoyés environ 50 fois par seconde, en plus des services standards (batterie, informations de l'appareil).",
-            "Modèles de données (MCD, MLD, MCT) et migration SQL : tables des brassards, des calibrations et des résultats EMG.",
-            "Brassard simulé en Dart, qui produit les mêmes octets que le vrai, et adaptation de l'écran de séance à la mesure EMG.",
-            "API PHP pour enregistrer les séances et les calibrations.",
-            "Firmware de test pour ESP32 (faux brassard Bluetooth), écrit mais pas encore essayé sur une carte.",
-            "13 tests automatiques : format des paquets, résumé de séance, brassard simulé.",
+            "Communication Bluetooth (BLE GATT) entre le brassard et l'application.",
+            "Modèles de données et intégration réseau.",
+            "Brassard simulé et tests automatiques.",
           ],
           en: [
-            "Bluetooth LE (GATT) specification: one dedicated service, four characteristics and 8-byte packets sent about 50 times per second, on top of the standard battery and device information services.",
-            "Data models (Merise: conceptual, logical, processing) and SQL migration: armband, calibration and EMG result tables.",
-            "Simulated armband in Dart that produces the same bytes as the real one, and adaptation of the session screen to EMG data.",
-            "PHP API to store sessions and calibrations.",
-            "ESP32 test firmware (fake Bluetooth armband), written but not yet tried on a board.",
-            "13 automated tests: packet format, session summary, simulated armband.",
+            "Bluetooth communication (BLE GATT) between the armband and the app.",
+            "Data models and network integration.",
+            "Simulated armband and automated tests.",
           ],
         },
-        figures: [
-          {
-            kind: "flow",
-            title: { fr: "Le chemin des données", en: "The data path" },
-            items: [
-              { name: "Muscle" },
-              { name: "MyoWare 2.0", via: "EMG" },
-              { name: "ESP32-S3", via: { fr: "analogique", en: "analog" } },
-              { name: { fr: "Application Flutter", en: "Flutter app" }, via: "Bluetooth LE", mine: true },
-              { name: { fr: "API PHP", en: "PHP API" }, via: "HTTPS", mine: true },
-              { name: "MySQL", via: "SQL", mine: true },
-            ],
-          },
-          {
-            kind: "bytes",
-            title: { fr: "Un paquet de mesure (8 octets, little-endian)", en: "One measurement packet (8 bytes, little-endian)" },
-            items: [
-              { hex: "e8 03 00 00", name: { fr: "horodatage", en: "timestamp" }, value: "1000 ms" },
-              { hex: "9e 02", name: "RMS", value: "670 mV" },
-              { hex: "2a", name: { fr: "intensité", en: "intensity" }, value: "42 % MVC" },
-              { hex: "00", name: { fr: "drapeaux", en: "flags" }, value: { fr: "pas d'alerte", en: "no alert" } },
-            ],
-          },
-        ],
-        stack: [
-          { name: "Bluetooth LE (GATT)", mine: true },
-          { name: "Dart / Flutter", mine: true },
-          { name: "PHP", mine: true },
-          { name: "SQL (MySQL / MariaDB)", mine: true },
-          { name: "C++ (ESP32)", mine: true },
-          { name: { fr: "Merise (MCD, MLD, MCT)", en: "Merise data modelling" }, mine: true },
-          { name: "MATLAB / Simulink" },
-          { name: "Python" },
-          { name: "CadQuery" },
-          { name: "GitHub Actions" },
-        ],
-        // TODO: valider ces trois résultats (vérifiés dans le dépôt de l'équipe).
+        stack: ["Bluetooth LE", "Flutter / Dart", "PHP", "MySQL", "ESP32 (C++)"],
         result: {
-          fr: [
-            "Le firmware final et l'application utilisent ce format Bluetooth ; l'équipe y a ajouté deux caractéristiques en conservant les quatre premières.",
-            "Les 13 tests sont relancés par GitHub à chaque envoi de code.",
-            "La démo en ligne fonctionne sans serveur, avec le brassard simulé et des données fictives.",
-          ],
-          en: [
-            "The final firmware and the app use this Bluetooth format; the team added two characteristics and kept the original four.",
-            "GitHub re-runs the 13 tests on every push.",
-            "The online demo runs without a server, with the simulated armband and fictitious data.",
-          ],
+          fr: ["Application testable en ligne, avec le brassard simulé et des données fictives."],
+          en: ["App available as an online demo, with the simulated armband and fictitious data."],
         },
         team: {
-          fr: "Valentin Auger (chef de projet, matériel, application, firmware, boîtier, documentation), Maxence Olivier (simulation Simulink, diagramme de Gantt), Othmen Al Bydeoi (architecture système).",
-          en: "Valentin Auger (project lead, hardware, app, firmware, enclosure, documentation), Maxence Olivier (Simulink simulation, Gantt chart), Othmen Al Bydeoi (system architecture).",
+          fr: "Valentin Auger (chef de projet, matériel, application, firmware, boîtier, documentation), Maxence Olivier (simulation Simulink, Gantt) et moi (architecture système).",
+          en: "Valentin Auger (project lead, hardware, app, firmware, enclosure, documentation), Maxence Olivier (Simulink simulation, Gantt chart) and me (system architecture).",
         },
-        // TODO: captures d'écran (seance.jpg, accueil-demo.jpg, evolution.jpg) après accord de Valentin Auger.
+        // TODO: captures d'écran, avec l'accord de l'équipe.
         shots: [],
       },
     },
@@ -396,27 +344,21 @@ window.PORTFOLIO = {
       ],
       study: {
         context: {
-          fr: "Projet de recherche de classe préparatoire sur le thème « Transition, Conversion, Transformation ». L'idée vient de la station de recharge présentée aux Olympiades, pour laquelle l'équipe avait ajouté des suiveurs solaires.",
-          en: "A preparatory-class research project on the theme \"Transition, Conversion, Transformation\". The idea came from the charging station shown at the Olympiads, to which the team had added solar trackers.",
+          fr: "Projet de recherche de classe préparatoire, inspiré de la station de recharge des Olympiades.",
+          en: "A preparatory-class research project, inspired by the Olympiad charging station.",
         },
         problem: {
-          fr: "Un panneau fixe capte moins d'énergie qu'un panneau qui suit la course du soleil. Un suivi automatique améliore-t-il la performance énergétique ?",
-          en: "A fixed panel collects less energy than one that follows the sun. Does automatic tracking improve energy performance?",
+          fr: "Un panneau qui suit le soleil capte-t-il plus d'énergie qu'un panneau fixe ?",
+          en: "Does a panel that follows the sun collect more energy than a fixed one?",
         },
         contribution: {
-          fr: [
-            "Programme Arduino : lecture de deux photorésistances montées en différentiel et correction de l'angle du panneau.",
-            "Automatisme : commande du servomoteur MG995 pour revenir face à la lumière.",
-          ],
-          en: [
-            "Arduino program: reading two photoresistors in a differential set-up and correcting the panel angle.",
-            "Automation: driving the MG995 servomotor to face the light again.",
-          ],
+          fr: ["Programme Arduino qui compare deux capteurs de lumière.", "Commande du servomoteur qui oriente le panneau."],
+          en: ["Arduino program comparing two light sensors.", "Control of the servomotor that turns the panel."],
         },
-        stack: ["Arduino Uno (C++)", { fr: "Servomoteur MG995", en: "MG995 servomotor" }, { fr: "Photorésistances (LDR)", en: "Photoresistors (LDR)" }, { fr: "Panneau photovoltaïque", en: "Photovoltaic panel" }],
+        stack: ["Arduino Uno (C++)", { fr: "Servomoteur MG995", en: "MG995 servomotor" }, { fr: "Capteurs LDR", en: "LDR sensors" }, { fr: "Panneau solaire", en: "Solar panel" }],
         result: {
-          fr: ["Prototype réalisé, avec un panneau incliné à 45°.", "TODO: résultat mesuré"],
-          en: ["Prototype built, with a panel tilted at 45°.", "TODO: measured energy gain on the prototype"],
+          fr: ["Prototype réalisé.", "TODO: résultat mesuré"],
+          en: ["Prototype built.", "TODO: measured result"],
         },
         shots: [
           { src: "assets/img/projets/tipe-prototype.webp", w: 960, h: 583, alt: { fr: "Prototype posé sur une table : plaque d'essai câblée, servomoteur et petit panneau solaire", en: "Prototype on a table: wired breadboard, servomotor and small solar panel" }, caption: { fr: "Le prototype", en: "The prototype" } },
@@ -449,26 +391,18 @@ window.PORTFOLIO = {
       ],
       study: {
         context: {
-          fr: "Concours de fin d'année de première STI2D (2021–2022) : concevoir, programmer et engager un robot autonome.",
-          en: "End-of-year competition in the STI2D technology track (2021–2022): design, program and race an autonomous robot.",
+          fr: "Concours de fin d'année : concevoir et programmer un robot autonome.",
+          en: "End-of-year competition: design and program an autonomous robot.",
         },
         problem: {
-          fr: "Rester stable dans les virages et fiabiliser la détection de la ligne, sans perdre de vitesse.",
-          en: "Staying stable in bends and detecting the line reliably, without losing speed.",
+          fr: "Rester stable dans les virages sans perdre de vitesse.",
+          en: "Staying stable in bends without losing speed.",
         },
         contribution: {
-          fr: [
-            "Programmation de la logique de suivi et de la correction de trajectoire.",
-            "Réglages : seuils des capteurs infrarouges, virages plus fluides, compromis entre vitesse et stabilité.",
-            "Coordination de l'équipe : répartition des tâches et suivi de l'avancement.",
-          ],
-          en: [
-            "Programming of the line-following logic and path correction.",
-            "Tuning: infrared sensor thresholds, smoother bends, balance between speed and stability.",
-            "Team coordination: sharing out the tasks and tracking progress.",
-          ],
+          fr: ["Programmation du suivi de ligne.", "Réglage des capteurs et de la vitesse.", "Coordination de l'équipe."],
+          en: ["Programming of the line following.", "Tuning of the sensors and speed.", "Team coordination."],
         },
-        stack: ["Arduino (C++)", { fr: "Capteurs infrarouges", en: "Infrared sensors" }, { fr: "Moteurs pilotés par pont en H", en: "Motors driven by an H-bridge" }],
+        stack: ["Arduino (C++)", { fr: "Capteurs infrarouges", en: "Infrared sensors" }, { fr: "Pont en H", en: "H-bridge" }],
         result: { fr: ["1re place au concours."], en: ["1st place in the competition."] },
         shots: [
           { src: "assets/img/projets/robot-virage.webp", w: 362, h: 452, alt: { fr: "Le robot, coque rouge, suit une ligne claire dans un virage", en: "The robot, with a red shell, follows a light line through a bend" }, caption: { fr: "Dans un virage", en: "Through a bend" } },
@@ -485,7 +419,7 @@ window.PORTFOLIO = {
         fr: "Olympiades des Sciences de l'Ingénieur · lycée Déodat de Séverac · mai 2023",
         en: "French Engineering Sciences Olympiads · Lycée Déodat de Séverac · May 2023",
       },
-      badge: { kind: "award", text: { fr: "Prix de l'hybridation", en: "Hybridisation award" } },
+      badge: { kind: "award", text: { fr: "Prix de l'hybridation", en: "Hybridisation Prize" } },
       role: { fr: "En charge de la conception du prototype", en: "In charge of prototype design" },
       summary: {
         fr: "Maquette d'une station de recharge pour vélos électriques, alimentée par des panneaux solaires, imaginée en équipe et présentée aux Olympiades.",
@@ -501,25 +435,25 @@ window.PORTFOLIO = {
       ],
       study: {
         context: {
-          fr: "Concours national de l'UPSTI pour les lycéens, sur un projet d'équipe innovant en sciences de l'ingénieur.",
-          en: "A national competition run by UPSTI for high-school students, based on an innovative team project in engineering sciences.",
+          fr: "Concours national pour lycéens, en équipe.",
+          en: "A national team competition for high-school students.",
         },
         problem: {
-          fr: "Concevoir une station de recharge autonome en énergie : panneaux solaires en toiture et suiveurs pour mieux capter la lumière.",
-          en: "Designing an energy-independent charging station: rooftop solar panels with trackers to capture more light.",
+          fr: "Recharger des vélos électriques avec l'énergie solaire.",
+          en: "Charging e-bikes with solar energy.",
         },
         contribution: {
-          fr: ["Conception du prototype présenté au jury.", "TODO: ce que tu as conçu précisément (structure, électronique, plans…)"],
-          en: ["Design of the prototype shown to the jury.", "TODO: what you designed exactly"],
+          fr: ["Conception du prototype.", "TODO: détail de la conception"],
+          en: ["Prototype design.", "TODO: design details"],
         },
         stack: [{ fr: "Panneaux solaires", en: "Solar panels" }, { fr: "Suiveurs solaires", en: "Solar trackers" }, "TODO: carte et logiciels utilisés"],
         result: {
           fr: ["Prix de l'hybridation, pour la qualité et l'originalité de la maquette."],
-          en: ["Hybridisation award (Prix de l'hybridation), for the quality and originality of the model."],
+          en: ["Hybridisation Prize, for the quality and originality of the model."],
         },
         shots: [
           { src: "assets/img/projets/osi-maquette.webp", w: 478, h: 598, alt: { fr: "Maquette en bois de la station avec panneau solaire en toiture et vélo miniature", en: "Wooden model of the station with a rooftop solar panel and a miniature bike" }, caption: { fr: "La maquette", en: "The model" } },
-          { src: "assets/img/projets/osi-electronique.webp", w: 478, h: 598, alt: { fr: "Arrière de la maquette : cartes électroniques sous le panneau solaire", en: "Back of the model: electronic boards under the solar panel" }, caption: { fr: "L'électronique embarquée", en: "The on-board electronics" } },
+          { src: "assets/img/projets/osi-electronique.webp", w: 478, h: 598, alt: { fr: "Arrière de la maquette : cartes électroniques sous le panneau solaire", en: "Back of the model: electronic boards under the solar panel" }, caption: { fr: "L'électronique", en: "The electronics" } },
         ],
       },
     },
@@ -544,39 +478,24 @@ window.PORTFOLIO = {
       ],
       study: {
         context: {
-          fr: "« Le digital de votre commerce, en un simple geste. » DGTap s'adresse aux cafés, restaurants, bars, coiffeurs, barbiers et indépendants.",
-          en: "\"Your shop's digital presence in one simple gesture.\" DGTap is aimed at cafés, restaurants, bars, hairdressers, barbers and independent shops.",
+          fr: "« Le digital de votre commerce, en un simple geste. » Pour les cafés, restaurants, bars, coiffeurs, barbiers et indépendants.",
+          en: "“Your shop's digital presence in one simple gesture.” For cafés, restaurants, bars, hairdressers, barbers and independent shops.",
         },
         problem: {
-          fr: "Chercher une fiche Google, taper l'adresse d'un menu ou retrouver un compte Instagram demande trop d'étapes au client. DGTap les remplace par un geste.",
-          en: "Finding a Google listing, typing a menu address or looking up an Instagram account takes customers too many steps. DGTap replaces them with one gesture.",
+          fr: "Trouver la fiche Google, le menu ou le compte Instagram d'un commerce demande trop d'étapes.",
+          en: "Finding a shop's Google listing, menu or Instagram account takes too many steps.",
         },
         contribution: {
-          fr: [
-            "Création de la marque.",
-            "Cartes acryliques NFC pour avis Google et menus digitaux : programmation et installation chez les commerçants.",
-            "TODO: rôle exact (conception du site, prospection…)",
-          ],
-          en: [
-            "Creation of the brand.",
-            "Acrylic NFC cards for Google reviews and digital menus: programming and installation in shops.",
-            "TODO: exact role (website, prospecting…)",
-          ],
+          fr: ["Création de la marque.", "Cartes NFC : programmation et installation chez les commerçants.", "TODO: rôle exact"],
+          en: ["Creation of the brand.", "NFC cards: programming and installation at merchants' premises.", "TODO: exact role"],
         },
-        stack: ["HTML", "CSS", "JavaScript", "NFC", "QR code", "Open Graph", "WebP"],
+        stack: ["HTML / CSS / JavaScript", "NFC", "QR code"],
         result: {
-          fr: [
-            "Site en ligne, responsive : comparatif avant/après, gamme de produits, fonctionnement en 4 étapes, FAQ et demande de devis.",
-            "TODO: résultats réels (nombre de commerces équipés, etc.)",
-          ],
-          en: [
-            "Live, responsive website: before/after comparison, product range, 4-step process, FAQ and quote requests.",
-            "TODO: actual results",
-          ],
+          fr: ["Site en ligne : gamme de produits, FAQ et demande de devis.", "TODO: résultats"],
+          en: ["Live website: product range, FAQ and quote requests.", "TODO: results"],
         },
-        // TODO: valider cette capture, prise sur le site public le 25 novembre 2026.
         shots: [
-          { src: "assets/img/projets/dgtap-situation.webp", w: 1100, h: 679, alt: { fr: "Section « En situation » du site : un client approche son téléphone, une plaque posée sur un comptoir et une plaque menu", en: "\"In situation\" section of the website: a customer taps a phone, a plate on a counter and a menu plate" }, caption: { fr: "Extrait de dgtap.fr", en: "Excerpt from dgtap.fr" } },
+          { src: "assets/img/projets/dgtap-situation.webp", w: 1100, h: 679, alt: { fr: "Section « En situation » du site : un client approche son téléphone, une plaque posée sur un comptoir et une plaque menu", en: "“In situation” section of the website: a customer taps a phone, a plate on a counter and a menu plate" }, caption: { fr: "Extrait de dgtap.fr", en: "Excerpt from dgtap.fr" } },
         ],
       },
     },
@@ -592,10 +511,9 @@ window.PORTFOLIO = {
       role: { fr: "Contributeur", en: "Contributor" },
       summary: {
         fr: "Vêtements de calisthenics haut de gamme, sous le slogan « Strength in Nature, Built for Stillness. » Le site présente la marque et propose sa collection, en français et en anglais.",
-        en: "High-end calisthenics clothing, under the slogan \"Strength in Nature, Built for Stillness.\" The website presents the brand and offers its collection, in French and English.",
+        en: "High-end calisthenics clothing, under the slogan “Strength in Nature, Built for Stillness.” The website presents the brand and offers its collection, in French and English.",
       },
       tech: ["React", "Tailwind CSS", { fr: "API REST", en: "REST API" }],
-      // TODO: lien du dépôt, s'il existe et peut être public.
       links: [{ kind: "site", label: { fr: "Voir le site", en: "Visit website" }, url: "https://skyrise-delta.vercel.app/" }],
       art: [
         "M8 104L84 40l34 32 44-54 62 62 26-22 62 46z",
@@ -604,19 +522,17 @@ window.PORTFOLIO = {
       ],
       study: {
         context: {
-          fr: "SKYRISE est la marque de mon frère. Le site est une application React, avec une API séparée pour le catalogue, les paiements et les messages.",
-          en: "SKYRISE is my brother's brand. The website is a React application, with a separate API for the catalogue, payments and messages.",
+          fr: "Boutique en ligne de la marque de mon frère, à laquelle je contribue.",
+          en: "Online store of my brother's brand, to which I contribute.",
         },
-        problem: "TODO: besoin de départ de la boutique",
-        contribution: { fr: ["TODO: ce que tu fais exactement (développement, design, paiement, stock, marketing…)"], en: ["TODO: what you do exactly"] },
-        // TODO: confirmer ces technologies, relevées dans le code public du site.
-        stack: ["React", "React Router", "Tailwind CSS", { fr: "API REST", en: "REST API" }],
-        // TODO: état réel du site (en ligne, en développement ?). Pages constatées le 25 novembre 2026.
+        problem: "TODO: besoin de départ",
+        contribution: "TODO: contribution exacte",
+        stack: ["React", "Tailwind CSS", { fr: "API REST", en: "REST API" }],
         result: {
-          fr: ["Site consultable : catalogue, fiches produit, panier, retours, FAQ et contact, en français et en anglais."],
-          en: ["Website available: catalogue, product pages, cart, returns, FAQ and contact, in French and English."],
+          fr: ["Catalogue, panier, retours et contact, en français et en anglais."],
+          en: ["Catalogue, cart, returns and contact, in French and English."],
         },
-        // TODO: captures d'écran, avec l'accord de ton frère.
+        // TODO: captures d'écran.
         shots: [],
       },
     },
@@ -625,7 +541,6 @@ window.PORTFOLIO = {
       id: "postop",
       title: "PostOp Suivi",
       category: "health",
-      // TODO: confirmer les dates (2025 sur l'ancien site, code publié en mai 2026).
       context: { fr: "Projet Agile · EPISEN / UPEC · équipe 7 · 2025–2026", en: "Agile project · EPISEN / UPEC · team 7 · 2025–2026" },
       role: "Scrum Master",
       summary: {
@@ -634,32 +549,29 @@ window.PORTFOLIO = {
       },
       note: { fr: "Projet pédagogique : ce n'est pas un dispositif médical.", en: "Student project: this is not a medical device." },
       tech: ["Scrum", "JavaScript", "Node.js", "Supabase"],
-      links: [],
+      // Pour afficher le dépôt, retirer les deux barres de la ligne suivante.
+      links: [
+        // { kind: "code", label: "GitHub", url: "https://github.com/Othmen94/PROJET-AGILE" },
+      ],
       art: [
         "M56 24h60a6 6 0 0 1 6 6v72H50V30a6 6 0 0 1 6-6zM72 16h28v14H72zM64 48h44M64 62h44M64 76h28",
         "M140 64h34l8-22 14 46 12-34 6 10h30",
         "M296 64a22 22 0 1 1-44 0a22 22 0 1 1 44 0M274 52v14M274 74v2",
       ],
       study: {
-        context: { fr: "Projet Agile mené en équipe à l'EPISEN, en quatre sprints.", en: "An Agile team project at EPISEN, run in four sprints." },
+        context: { fr: "Projet Agile en équipe à l'EPISEN, en quatre sprints.", en: "An Agile team project at EPISEN, in four sprints." },
         problem: {
-          fr: "Détecter tôt une complication après le retour à domicile, pour réduire les réhospitalisations.",
-          en: "Detecting complications early once patients are back home, to reduce readmissions.",
+          fr: "Repérer tôt une complication après une opération.",
+          en: "Spotting complications early after surgery.",
         },
         contribution: {
-          fr: ["Scrum Master de l'équipe 7 : Daily Scrum, Sprint Review et rétrospective.", "TODO: contribution au code"],
-          en: ["Scrum Master of team 7: Daily Scrum, Sprint Review and Retrospective.", "TODO: your part in the code"],
+          fr: ["Scrum Master : Daily Scrum, Sprint Review et rétrospective.", "TODO: contribution au code"],
+          en: ["Scrum Master: Daily Scrum, Sprint Review and Retrospective.", "TODO: code contribution"],
         },
-        stack: ["HTML / CSS / JavaScript", "Node.js (Express)", "Supabase (PostgreSQL)"],
+        stack: ["HTML / CSS / JavaScript", "Node.js", "Supabase"],
         result: {
-          fr: [
-            "Un espace patient (questionnaire, photo, messages, planning) et un espace médecin.",
-            "Une réponse à risque (douleur, température, fatigue ou aspect de la plaie) crée une alerte pour le médecin.",
-          ],
-          en: [
-            "A patient area (questionnaire, photo, messages, schedule) and a doctor area.",
-            "A risky answer (pain, temperature, fatigue or wound appearance) raises an alert for the doctor.",
-          ],
+          fr: ["Un espace patient, un espace médecin et des alertes automatiques."],
+          en: ["A patient area, a doctor area and automatic alerts."],
         },
         shots: [],
       },
@@ -734,9 +646,6 @@ window.PORTFOLIO = {
       problem: { fr: "Problème", en: "Problem" },
       contribution: { fr: "Ma contribution", en: "My contribution" },
       stack: { fr: "Stack", en: "Stack" },
-      mine: { fr: "utilisé dans ma partie", en: "used in my part" },
-      team: { fr: "reste de l'équipe", en: "rest of the team" },
-      flowMine: { fr: "en vert, les liaisons que j'ai spécifiées", en: "in green, the links I specified" },
       result: { fr: "Résultat", en: "Result" },
       credits: { fr: "Équipe", en: "Team" },
       shots: { fr: "Captures", en: "Pictures" },

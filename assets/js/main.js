@@ -363,63 +363,7 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
 
   const bullets = (items) => el("ul", { class: "bullets" }, items.map((item) => el("li", null, item)));
 
-  function stackList(stack) {
-    const items = stack.map((item) => (item.name ? item : { name: item })).filter((item) => t(item.name));
-    return [
-      el(
-        "ul",
-        { class: "tags" },
-        items.map((item) =>
-          el("li", { class: item.mine ? "is-mine" : null }, t(item.name), item.mine && hiddenText(` (${t(D.ui.study.mine)})`))
-        )
-      ),
-      items.some((item) => item.mine) &&
-        el("p", { class: "legend", "aria-hidden": "true" }, el("span", { class: "is-mine" }, t(D.ui.study.mine)), el("span", null, t(D.ui.study.team))),
-    ];
-  }
-
-  function flowFigure(figure) {
-    return el(
-      "figure",
-      { class: "card figure" },
-      el("figcaption", null, t(figure.title), figure.items.some((item) => item.mine) && ` (${t(D.ui.study.flowMine)})`),
-      el(
-        "ol",
-        { class: "flow" },
-        figure.items.map((item) =>
-          el(
-            "li",
-            null,
-            item.via && el("span", { class: `via${item.mine ? " is-mine" : ""}` }, t(item.via), icon("next", 14)),
-            el("span", { class: "node" }, t(item.name))
-          )
-        )
-      )
-    );
-  }
-
-  function bytesFigure(figure) {
-    return el(
-      "figure",
-      { class: "card figure" },
-      el("figcaption", null, t(figure.title)),
-      el(
-        "ol",
-        { class: "bytes" },
-        figure.items.map((item) =>
-          el(
-            "li",
-            null,
-            el("span", { class: "hex" }, item.hex),
-            el("span", { class: "name" }, t(item.name)),
-            el("span", { class: "value" }, t(item.value))
-          )
-        )
-      )
-    );
-  }
-
-  const FIGURES = { flow: flowFigure, bytes: bytesFigure };
+  const stackList = (stack) => el("ul", { class: "tags" }, t(stack).map((name) => el("li", null, name)));
 
   function shotList(shots) {
     return el(
@@ -443,7 +387,10 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
 
     const block = (label, content) => content && [el("h3", null, t(label)), content];
     const text = (value) => t(value) && el("p", { class: "study-text" }, t(value));
-    const list = (value) => t(value || []).length > 0 && bullets(t(value));
+    const list = (value) => {
+      const items = [t(value)].flat().filter(Boolean);
+      return items.length > 0 && bullets(items);
+    };
     const step = (offset, label) => {
       const target = D.projects[index + offset];
       if (!target) return el("span");
@@ -475,7 +422,6 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
         block(labels.context, text(study.context)),
         block(labels.problem, text(study.problem)),
         block(labels.contribution, list(study.contribution)),
-        (study.figures || []).map((figure) => FIGURES[figure.kind](figure)),
         block(labels.stack, stackList(study.stack)),
         block(labels.result, list(study.result)),
         block(labels.credits, text(study.team)),
@@ -723,14 +669,9 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
 
   const toggleTheme = () => setTheme(root.dataset.theme === "light" ? "dark" : "light", true);
 
+  // Sombre à la première visite, puis le choix du visiteur.
   function initTheme() {
-    const system = matchMedia("(prefers-color-scheme: light)");
-    const saved = store.get("theme");
-    const hasChoice = saved === "light" || saved === "dark";
-    setTheme(hasChoice ? saved : system.matches ? "light" : "dark", false);
-    system.addEventListener("change", (event) => {
-      if (!store.get("theme")) setTheme(event.matches ? "light" : "dark", false);
-    });
+    setTheme(store.get("theme") === "light" ? "light" : "dark", false);
     $("#theme-btn").addEventListener("click", toggleTheme);
   }
 

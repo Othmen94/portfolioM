@@ -9,7 +9,7 @@ En ligne : https://www.xyzdesign.xyz/
 python -m http.server 8000
 ```
 
-Puis ouvrir http://localhost:8000. Ouvrir `index.html` par double-clic fonctionne aussi.
+Puis ouvrir http://localhost:8000. Ouvrir `index.html` par double-clic fonctionne aussi (la console signale alors le préchargement de la police, sans conséquence).
 
 Adresses utiles :
 
@@ -28,7 +28,7 @@ assets/js/data.js       toutes les données : textes FR/EN, projets, expérience
 assets/js/main.js       affichage, langue, thème, filtres, études de cas, formulaire, mini terminal
 assets/img/             photo, favicon, image de partage (og.png), images des projets (WebP)
 assets/fonts/           JetBrains Mono, auto-hébergée (licence OFL.txt)
-assets/cv/              CV en anglais, à déposer
+assets/cv/              CV en anglais, version web (sans téléphone, ville ni âge)
 vercel.json             en-têtes de sécurité, cache, redirection de l'ancien CV
 .vercelignore           fichiers du dépôt qui ne sont pas mis en ligne
 robots.txt, sitemap.xml référencement
@@ -57,7 +57,7 @@ Ajouter un objet dans le tableau `projects` de `assets/js/data.js`. Rien d'autre
     context: { fr: "…", en: "…" },
     problem: { fr: "…", en: "…" },
     contribution: { fr: ["…", "…"], en: ["…", "…"] },
-    stack: ["Python", { name: "C++", mine: true }],   // mine: true = utilisé dans ma partie
+    stack: ["Python", "C++"],
     result: { fr: ["…"], en: ["…"] },
     team: { fr: "…", en: "…" },                       // facultatif
     shots: [
@@ -80,7 +80,7 @@ Ajouter un objet dans le tableau `projects` de `assets/js/data.js`. Rien d'autre
 
 | Je veux… | Où |
 |---|---|
-| publier mon CV | déposer `assets/cv/CV_Othmen_AL_BYDEOI_EN.pdf` **sans téléphone, adresse ni âge**, puis `site.cv.ready: true` dans `data.js` |
+| mettre à jour mon CV | remplacer `assets/cv/CV_Othmen_AL_BYDEOI_EN.pdf` par une version **sans téléphone, ville ni âge**. Le CV complet, à la racine, est ignoré par Git et par Vercel |
 | afficher un niveau de compétence | `level: "beginner"`, `"intermediate"` ou `"advanced"` sur la compétence |
 | afficher une compétence en attente | supprimer `pending: true` |
 | changer l'e-mail, LinkedIn ou GitHub | `site` dans `data.js`, et les mêmes liens dans `index.html` (contact, formulaire, JSON-LD) |
