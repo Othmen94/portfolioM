@@ -591,7 +591,7 @@ window.PORTFOLIO = {
       },
       role: { fr: "Contributeur", en: "Contributor" },
       summary: {
-        fr: "Vêtements de calisthenics haut de gamme, sous le slogan « Strength in Nature, Built for Stillness. ». Le site présente la marque et propose sa collection, en français et en anglais.",
+        fr: "Vêtements de calisthenics haut de gamme, sous le slogan « Strength in Nature, Built for Stillness. » Le site présente la marque et propose sa collection, en français et en anglais.",
         en: "High-end calisthenics clothing, under the slogan \"Strength in Nature, Built for Stillness.\" The website presents the brand and offers its collection, in French and English.",
       },
       tech: ["React", "Tailwind CSS", { fr: "API REST", en: "REST API" }],

@@ -1,0 +1,402 @@
+"use strict";
+
+// TODO: confirmer que ce formulaire Formspree est actif et relié à la bonne adresse.
+// Laisser "" pour ouvrir la messagerie du visiteur (mailto) à la place.
+const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
+
+(() => {
+  const D = window.PORTFOLIO;
+  const root = document.documentElement;
+  const params = new URLSearchParams(location.search);
+  const showTodo = params.has("todo");
+
+  const $ = (selector, scope = document) => scope.querySelector(selector);
+  const $$ = (selector, scope = document) => [...scope.querySelectorAll(selector)];
+
+  /* ---------- Outils ---------- */
+
+  const store = {
+    get(key) {
+      try {
+        return localStorage.getItem(key);
+      } catch {
+        return null;
+      }
+    },
+    set(key, value) {
+      try {
+        localStorage.setItem(key, value);
+      } catch {
+        // Stockage bloqué (navigation privée) : le choix vaut pour cette visite seulement.
+      }
+    },
+  };
+
+  let lang = detectLang();
+
+  function detectLang() {
+    const asked = params.get("lang");
+    if (asked === "fr" || asked === "en") return asked;
+    return /^fr/i.test(store.get("lang") || navigator.language || "fr") ? "fr" : "en";
+  }
+
+  function typography(text) {
+    const s = text.replace(/'/g, "’").replace(/(\d)–(\d)/g, "$1⁠–⁠$2");
+    return lang === "fr" ? s.replace(/ ([:;?!»])/g, " $1").replace(/« /g, "« ") : s;
+  }
+
+  // Texte dans la langue courante ; les TODO deviennent une chaîne vide, sauf avec ?todo.
+  function t(value) {
+    if (value == null) return "";
+    if (Array.isArray(value)) return value.map(t).filter(Boolean);
+    if (typeof value === "object") return t(value[lang] ?? value.fr);
+    const text = String(value);
+    if (text.startsWith("TODO") && !showTodo) return "";
+    return typography(text);
+  }
+
+  const fill = (text, values) => text.replace(/\{(\w+)\}/g, (_, key) => values[key]);
+  const path = (key) => key.split(".").reduce((node, part) => node?.[part], D);
+
+  function el(tag, attrs, ...children) {
+    const node = document.createElement(tag);
+    for (const [name, value] of Object.entries(attrs || {})) {
+      if (value == null || value === false) continue;
+      if (name.startsWith("on")) node.addEventListener(name.slice(2), value);
+      else node.setAttribute(name, value === true ? "" : value);
+    }
+    node.append(...children.flat(Infinity).filter((child) => child != null && child !== "" && child !== false));
+    return node;
+  }
+
+  function svg(viewBox, paths, attrs) {
+    const ns = "http://www.w3.org/2000/svg";
+    const node = document.createElementNS(ns, "svg");
+    for (const [name, value] of Object.entries({ viewBox, "aria-hidden": "true", ...attrs })) node.setAttribute(name, value);
+    for (const d of paths) {
+      const line = document.createElementNS(ns, "path");
+      line.setAttribute("d", d);
+      node.append(line);
+    }
+    return node;
+  }
+
+  const ICONS = {
+    out: ["M8 5h7v7M15 5L6 14"],
+    code: ["M7 6l-4 4 4 4M13 6l4 4-4 4"],
+    close: ["M5 5l10 10M15 5L5 15"],
+  };
+  const icon = (name, size = 16) => svg("0 0 20 20", ICONS[name], { width: size, height: size });
+  const hiddenText = (text) => el("span", { class: "sr-only" }, text);
+
+  function outLink(link, className = "link") {
+    return el(
+      "a",
+      { class: className, href: link.url, target: "_blank", rel: "noopener noreferrer" },
+      icon(link.kind === "code" ? "code" : "out"),
+      t(link.label),
+      hiddenText(` (${t(D.ui.newTab)})`)
+    );
+  }
+
+  function say(message) {
+    const live = $("#live");
+    live.textContent = "";
+    requestAnimationFrame(() => {
+      live.textContent = message;
+    });
+  }
+
+  const fileName = (project) => `proj_${String(D.projects.indexOf(project) + 1).padStart(2, "0")}.${project.id}`;
+  const projectById = (id) => D.projects.find((project) => project.id === id);
+
+  /* ---------- Rendu ---------- */
+
+  function renderTexts() {
+    root.lang = lang;
+    document.title = t(D.ui.title);
+    $('meta[name="description"]').content = t(D.ui.description);
+    for (const node of $$("[data-i18n]")) node.textContent = t(path(node.dataset.i18n));
+    for (const node of $$("[data-i18n-attr]")) {
+      for (const pair of node.dataset.i18nAttr.split(";")) {
+        const [attr, key] = pair.split("=");
+        node.setAttribute(attr, t(path(key)));
+      }
+    }
+    for (const button of $$("[data-lang]")) button.setAttribute("aria-pressed", String(button.dataset.lang === lang));
+    $("#year").textContent = new Date().getFullYear();
+  }
+
+  function renderHero() {
+    $("#facts").replaceChildren(...D.hero.facts.flatMap((fact) => [el("dt", null, t(fact.k)), el("dd", null, t(fact.v))]));
+
+    const stats = [
+      [D.projects.length, D.stats.projects],
+      [new Date().getFullYear() - D.site.workingSince, D.stats.years],
+      [D.associations.length, D.stats.associations],
+      [t(D.site.availableFrom), D.stats.available],
+    ];
+    $("#stats").replaceChildren(...stats.map(([value, label]) => el("div", null, el("dt", null, t(label)), el("dd", null, String(value)))));
+
+    const cv = $("#cv-btn");
+    cv.textContent = t(D.site.cv.ready ? D.ui.buttons.cv : D.ui.buttons.cvAsk);
+    cv.setAttribute("href", D.site.cv.ready ? D.site.cv.file : "#contact");
+    cv.toggleAttribute("download", D.site.cv.ready);
+  }
+
+  function renderProfile() {
+    const { profile } = D;
+    const languages = t(profile.languages);
+    $("#profil-body").replaceChildren(
+      el("div", { class: "prose" }, t(profile.paragraphs).map((text) => el("p", null, text))),
+      el(
+        "div",
+        { class: "card edu" },
+        el("h3", null, t(profile.educationTitle)),
+        el(
+          "ol",
+          null,
+          profile.education.map((item) =>
+            el("li", null, el("p", { class: "when" }, t(item.date)), el("p", { class: "what" }, t(item.title)), el("p", { class: "where" }, t(item.place)))
+          )
+        ),
+        languages && [el("h3", null, t(profile.languagesTitle)), el("p", null, languages)]
+      )
+    );
+  }
+
+  function skillItem(skill) {
+    const level = D.ui.levels[skill.level];
+    const sources = (skill.from || []).map((id) =>
+      id === "cv"
+        ? el("span", null, t(D.ui.skillCv))
+        : el("a", { href: `#etude-${id}` }, hiddenText(`${t(D.ui.project.open)} `), id)
+    );
+    return el(
+      "li",
+      null,
+      el("span", null, t(skill.name)),
+      level && el("span", { class: "level" }, t(level)),
+      el("span", { class: "leader", "aria-hidden": "true" }),
+      sources.length > 0 && el("span", { class: "sources" }, sources)
+    );
+  }
+
+  function renderSkills() {
+    $("#skills-body").replaceChildren(
+      ...D.skills.map((group) => {
+        const items = group.items.filter((skill) => !skill.pending || showTodo);
+        const plain = items.every((skill) => !skill.from);
+        return el("div", { class: `card panel${plain ? " plain" : ""}` }, el("h3", null, t(group.title)), el("ul", null, items.map(skillItem)));
+      })
+    );
+  }
+
+  function logItem(item) {
+    const text = t(item.text);
+    const tags = t(item.tags || []);
+    return el(
+      "li",
+      { class: "log-item" },
+      el(
+        "div",
+        { class: "log-when" },
+        t(item.date) && el("span", null, t(item.date)),
+        el("span", { class: `status ${item.status}` }, t(D.ui.status[item.status]))
+      ),
+      el(
+        "div",
+        null,
+        el("h4", null, t(item.title)),
+        el("p", { class: "org" }, t(item.org)),
+        text && el("p", { class: "text" }, text),
+        tags.length > 0 && el("ul", { class: "tags" }, tags.map((tag) => el("li", null, tag)))
+      )
+    );
+  }
+
+  function renderExperience() {
+    const groups = [...D.experience, { title: D.associationsTitle, short: true, items: D.associations }];
+    $("#exp-body").replaceChildren(
+      ...groups.map((group) =>
+        el("div", { class: `exp-group${group.short ? " short" : ""}` }, el("h3", null, t(group.title)), el("ol", null, group.items.map(logItem)))
+      )
+    );
+  }
+
+  const DEFAULT_ART = ["M118 42l22 18-22 18M152 80h44"];
+
+  function projectCard(project) {
+    const category = D.categories.find((item) => item.id === project.category);
+    const title = t(project.title);
+    return el(
+      "li",
+      { class: project.featured ? "featured" : null, "data-category": project.category },
+      el(
+        "article",
+        { class: "card project" },
+        el("p", { class: "project-bar" }, el("span", { class: "file" }, fileName(project)), el("span", null, t(category.label))),
+        el("div", { class: "art", "aria-hidden": "true" }, svg("0 0 320 120", project.art || DEFAULT_ART)),
+        el(
+          "div",
+          { class: "project-body" },
+          project.badge && el("p", { class: `medal ${project.badge.kind}` }, t(project.badge.text)),
+          el("h3", null, title),
+          el("p", { class: "meta" }, t(project.context)),
+          el("p", { class: "summary" }, t(project.summary)),
+          t(project.note) && el("p", { class: "note" }, t(project.note)),
+          el("p", { class: "mine" }, el("b", null, `${t(D.ui.project.role)} `), t(project.role)),
+          el("ul", { class: "tags", "aria-label": t(D.ui.project.tech) }, t(project.tech).map((name) => el("li", null, name))),
+          el("div", { class: "project-actions" }, project.links.map((link) => outLink(link)))
+        )
+      )
+    );
+  }
+
+  function renderProjects() {
+    $("#projects-body").replaceChildren(...D.projects.map(projectCard));
+  }
+
+  function renderContact() {
+    const { site, ui } = D;
+    const row = (label, value, href, external) =>
+      el(
+        "li",
+        null,
+        el(
+          "a",
+          { href, target: external && "_blank", rel: external && "noopener noreferrer" },
+          el("span", { class: "k" }, t(label)),
+          el("span", { class: "v" }, value),
+          external && hiddenText(` (${t(ui.newTab)})`)
+        )
+      );
+    $("#contact-links").replaceChildren(
+      row(ui.contact.email, site.email, `mailto:${site.email}`),
+      row(ui.contact.linkedin, t(ui.contact.profileLink), site.linkedin, true),
+      row(ui.contact.github, site.github.replace("https://", ""), site.github, true)
+    );
+  }
+
+  function render() {
+    renderTexts();
+    renderHero();
+    renderProfile();
+    renderSkills();
+    renderExperience();
+    renderProjects();
+    renderContact();
+    renderTheme();
+  }
+
+  /* ---------- Langue et thème ---------- */
+
+  function setLang(next) {
+    lang = next;
+    store.set("lang", next);
+    if (params.has("lang")) {
+      params.delete("lang");
+      const query = params.toString();
+      history.replaceState(null, "", location.pathname + (query ? `?${query}` : "") + location.hash);
+    }
+    render();
+    say(t(D.ui.lang.changed));
+  }
+
+  function renderTheme() {
+    const light = root.dataset.theme === "light";
+    $("#theme-btn").setAttribute("aria-label", t(light ? D.ui.theme.toDark : D.ui.theme.toLight));
+    $('meta[name="theme-color"]').content = light ? "#f6f8fa" : "#0d1117";
+  }
+
+  function setTheme(next, remember) {
+    root.dataset.theme = next;
+    if (remember) {
+      store.set("theme", next);
+      say(t(D.ui.theme[next]));
+    }
+    renderTheme();
+  }
+
+  function initTheme() {
+    const system = matchMedia("(prefers-color-scheme: light)");
+    const saved = store.get("theme");
+    const hasChoice = saved === "light" || saved === "dark";
+    setTheme(hasChoice ? saved : system.matches ? "light" : "dark", false);
+    system.addEventListener("change", (event) => {
+      if (!store.get("theme")) setTheme(event.matches ? "light" : "dark", false);
+    });
+    $("#theme-btn").addEventListener("click", toggleTheme);
+  }
+
+  const toggleTheme = () => setTheme(root.dataset.theme === "light" ? "dark" : "light", true);
+
+  /* ---------- Navigation ---------- */
+
+  function initMenu() {
+    const button = $("#menu-btn");
+    const nav = $("#nav");
+    const setOpen = (open) => {
+      button.setAttribute("aria-expanded", String(open));
+      nav.classList.toggle("open", open);
+    };
+    button.addEventListener("click", () => setOpen(button.getAttribute("aria-expanded") !== "true"));
+    nav.addEventListener("click", (event) => event.target.closest("a") && setOpen(false));
+    document.addEventListener("click", (event) => !event.target.closest(".topbar") && setOpen(false));
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && nav.classList.contains("open")) {
+        setOpen(false);
+        button.focus();
+      }
+    });
+    $(".topbar").addEventListener("focusout", (event) => {
+      if (event.relatedTarget && !event.currentTarget.contains(event.relatedTarget)) setOpen(false);
+    });
+  }
+
+  function initActiveLink() {
+    const links = $$(".nav a");
+    const mark = (id) => {
+      for (const link of links) {
+        if (link.hash === `#${id}`) link.setAttribute("aria-current", "location");
+        else link.removeAttribute("aria-current");
+      }
+    };
+    const band = new IntersectionObserver(
+      (entries) => entries.forEach((entry) => entry.isIntersecting && mark(entry.target.id)),
+      { rootMargin: "-40% 0px -59% 0px" }
+    );
+    $$("main > section").forEach((section) => band.observe(section));
+    const end = new IntersectionObserver((entries) => entries[0].isIntersecting && mark("contact"), { threshold: 0.6 });
+    end.observe($(".footer"));
+  }
+
+  function initReveal() {
+    const items = $$(".reveal");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add("in");
+          observer.unobserve(entry.target);
+        }
+      },
+      { rootMargin: "0px 0px -6% 0px" }
+    );
+    items.forEach((item) => observer.observe(item));
+    root.classList.add("reveal-on");
+  }
+
+  /* ---------- Démarrage ---------- */
+
+  root.classList.add("js");
+  render();
+  initTheme();
+  initMenu();
+  for (const button of $$("[data-lang]")) button.addEventListener("click", () => setLang(button.dataset.lang));
+  if ("IntersectionObserver" in window) {
+    initActiveLink();
+    initReveal();
+  }
+  if (location.hash.length > 1) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+})();

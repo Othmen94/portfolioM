@@ -442,12 +442,12 @@ h2:focus {
   align-items: center;
   gap: 0.15rem 0.6rem;
   margin-top: 1.5rem;
-  padding: 0.45rem 0.9rem;
+  padding: 0.45rem 0.75rem;
   border: 1px solid var(--green);
   border-radius: 1.25rem;
   background: var(--tint);
   color: var(--green);
-  font: 500 var(--small) / 1.5 var(--mono);
+  font: 500 clamp(0.75rem, 3.4vw, var(--small)) / 1.5 var(--mono);
 }
 
 .badge strong {
@@ -474,12 +474,12 @@ h2:focus {
   justify-content: center;
   gap: 0.5rem;
   min-height: 2.875rem;
-  padding: 0.6rem 1.25rem;
+  padding: 0.6rem 1rem;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: none;
   color: var(--text);
-  font: 600 0.875rem var(--mono);
+  font: 600 var(--small) var(--mono);
   text-align: center;
   text-decoration: none;
   transition: border-color 0.15s, background-color 0.15s, color 0.15s;
@@ -548,15 +548,15 @@ h2:focus {
 }
 
 .fetch {
-  display: grid;
-  grid-template-columns: 120px minmax(0, 1fr);
-  gap: 1.1rem;
-  align-items: start;
+  display: flow-root;
   margin-top: 0.9rem;
 }
 
 .photo {
   position: relative;
+  float: left;
+  width: 120px;
+  margin: 0 1.1rem 0.35rem 0;
   padding: 5px;
   border: 1px solid var(--edge);
 }
@@ -603,8 +603,16 @@ h2:focus {
 
 @media (min-width: 40rem) {
   .fetch {
+    display: grid;
     grid-template-columns: 168px minmax(0, 1fr);
     gap: 1.4rem;
+    align-items: start;
+  }
+
+  .photo {
+    float: none;
+    width: auto;
+    margin: 0;
   }
 
   .facts {
@@ -836,7 +844,8 @@ h2:focus {
   flex-wrap: wrap;
   align-items: baseline;
   gap: 0 0.5rem;
-  padding-block: 0.22rem;
+  align-content: center;
+  min-height: 2rem;
   font: 400 0.875rem / 1.5 var(--mono);
 }
 
@@ -856,6 +865,9 @@ h2:focus {
 .sources {
   display: inline-flex;
   flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  margin-left: auto;
   gap: 0 0.5rem;
   color: var(--muted);
   font-size: 0.75rem;
@@ -933,7 +945,7 @@ h2:focus {
 
 @media (min-width: 48rem) {
   .log-item {
-    grid-template-columns: 13.5rem minmax(0, 1fr);
+    grid-template-columns: 14.75rem minmax(0, 1fr);
   }
 
   .log-when {
@@ -1069,6 +1081,10 @@ h2:focus {
 
 .art path {
   vector-effect: non-scaling-stroke;
+}
+
+.art path:last-child {
+  fill: var(--bg);
 }
 
 .project-body {
