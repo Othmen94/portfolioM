@@ -122,7 +122,10 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
     root.lang = lang;
     document.title = t(D.ui.title);
     $('meta[name="description"]').content = t(D.ui.description);
-    for (const node of $$("[data-i18n]")) node.textContent = t(path(node.dataset.i18n));
+    for (const node of $$("[data-i18n]")) {
+      const text = t(path(node.dataset.i18n));
+      if (node.textContent !== text) node.textContent = text;
+    }
     for (const node of $$("[data-i18n-attr]")) {
       for (const pair of node.dataset.i18nAttr.split(";")) {
         const [attr, key] = pair.split("=");
@@ -134,7 +137,10 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
   }
 
   function renderHero() {
-    $("#facts").replaceChildren(...D.hero.facts.flatMap((fact) => [el("dt", null, t(fact.k)), el("dd", null, t(fact.v))]));
+    const facts = $("#facts");
+    const words = D.hero.facts.flatMap((fact) => [t(fact.k), t(fact.v)]);
+    const upToDate = facts.children.length === words.length && words.every((word, i) => facts.children[i].textContent === word);
+    if (!upToDate) facts.replaceChildren(...words.map((word, i) => el(i % 2 ? "dd" : "dt", null, word)));
 
     const stats = [
       [D.projects.length, D.stats.projects],
@@ -251,16 +257,33 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
     );
   }
 
+  const SECTIONS = [renderProfile, renderSkills, renderExperience, renderProjects, renderContact, renderForm];
+
   function render() {
     renderTexts();
     renderHero();
-    renderProfile();
-    renderSkills();
-    renderExperience();
-    renderProjects();
-    renderContact();
-    renderForm();
     renderTheme();
+    SECTIONS.forEach((section) => section());
+  }
+
+  const nextFrame = () =>
+    new Promise((resolve) => {
+      const timer = setTimeout(resolve, 100);
+      requestAnimationFrame(() => {
+        clearTimeout(timer);
+        setTimeout(resolve);
+      });
+    });
+
+  // Premier affichage : une section par image, pour ne jamais bloquer la page longtemps.
+  async function firstRender() {
+    renderTexts();
+    renderHero();
+    root.classList.remove("swap");
+    for (const section of SECTIONS) {
+      await nextFrame();
+      section();
+    }
   }
 
   /* ---------- Projets et filtres ---------- */
@@ -769,7 +792,6 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
   /* ---------- Démarrage ---------- */
 
   root.classList.add("js");
-  render();
   initTheme();
   initMenu();
   initStudy();
@@ -780,5 +802,7 @@ const FORM_ENDPOINT = "https://formspree.io/f/mbdwaaeq";
     initActiveLink();
     initReveal();
   }
-  if (!route() && location.hash.length > 1) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+  firstRender().then(() => {
+    if (!route() && location.hash.length > 1) document.getElementById(location.hash.slice(1))?.scrollIntoView();
+  });
 })();

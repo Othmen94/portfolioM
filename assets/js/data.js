@@ -58,7 +58,7 @@ window.PORTFOLIO = {
   // Les nombres sont calculés par main.js à partir des données de ce fichier.
   stats: {
     projects: { fr: "projets", en: "projects" },
-    years: { fr: "ans d'expérience", en: "years of experience" },
+    years: { fr: "ans d'expérience (atelier vélo)", en: "years of experience (bike workshop)" },
     associations: { fr: "associations", en: "non-profits" },
     available: { fr: "disponible", en: "available" },
     // TODO: le CV indique « 3 pays vécus ». Donner la liste des pays pour rétablir ce chiffre.
